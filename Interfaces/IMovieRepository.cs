@@ -1,6 +1,6 @@
 ﻿using movies_api.Model;
 
-namespace movies_api.Repository;
+namespace movies_api.Interfaces;
 
 public interface IMovieRepository
 {
@@ -8,5 +8,5 @@ public interface IMovieRepository
     Movie GetMovieById(int id);
     void AddMovie(Movie movie);
     void UpdateMovie(Movie movie);
-    void DeleteMovie(int id);
+    void DeleteMovie(Movie movie);
 }

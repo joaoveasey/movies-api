@@ -1,28 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using movies_api.Interfaces;
 using movies_api.Model;
-using movies_api.Repository;
 
 namespace movies_api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/movie")]
     public class MovieController : ControllerBase
     {
         private readonly IMovieRepository _movieRepository;
 
         public MovieController(IMovieRepository movieRepository)
         {
-            _movieRepository = movieRepository;
+            _movieRepository = movieRepository ?? throw new ArgumentNullException();
         }
 
         [HttpGet]
-        public IActionResult GetMovies()
+        public ActionResult GetMovies()
         {
-            return Ok(_movieRepository.GetMovies());
+            var movies = _movieRepository.GetMovies();
+
+            return Ok(movies);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetMovieById(int id)
+        public ActionResult GetMovieById(int id)
         {
             if (_movieRepository.GetMovieById(id) == null)
                 return NotFound();
@@ -31,7 +33,7 @@ namespace movies_api.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostMovie(Movie movie)
+        public ActionResult AddMovie(Movie movie)
         {
             if (movie == null || movie.Title == null )
                 return BadRequest();
@@ -41,11 +43,14 @@ namespace movies_api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteMovie(int id)
+        public ActionResult DeleteMovie(int id)
         {
+            Movie movie = _movieRepository.GetMovieById(id);
+
             if (_movieRepository.GetMovieById(id) == null)
                 return NotFound();
-            _movieRepository.DeleteMovie(id);
+
+            _movieRepository.DeleteMovie(movie);
             return NoContent();
         }
     }
