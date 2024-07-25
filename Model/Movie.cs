@@ -6,6 +6,7 @@ public class Movie
 {
     [Key]
     public int Id { get; set; }
+    [Required]
     public string Title { get; set; }
     public int Year { get; set; }
     public string Genre { get; set; }
@@ -16,7 +17,7 @@ public class Movie
     public Movie(int id, string title, string genre, int year, string director, int duration, float rating)
     {
         Id = id;
-        Title = title ?? throw new ArgumentNullException(nameof(title));
+        Title = title;
         Genre = genre;
         Year = year;
         Director = director;

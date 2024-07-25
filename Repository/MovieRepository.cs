@@ -34,6 +34,7 @@ namespace movies_api.Repository
         public void UpdateMovie(Movie movie)
         {
             _context.Movies.Update(movie);
+            _context.SaveChanges();
         }
 
         public void DeleteMovie(Movie movie)

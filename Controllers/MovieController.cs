@@ -33,13 +33,23 @@ namespace movies_api.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddMovie(Movie movie)
+        public ActionResult AddMovie([FromBody]Movie movie)
         {
             if (movie == null || movie.Title == null )
                 return BadRequest();
             
             _movieRepository.AddMovie(movie);
             return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
+        }
+
+        [HttpPut]
+        public ActionResult UpdateMovie([FromBody] Movie movie)
+        {
+            if (movie.Id == null || movie.Id == 0 || movie.Title == null )
+                return BadRequest();
+
+            _movieRepository.UpdateMovie(movie);
+            return Ok(movie);
         }
 
         [HttpDelete("{id}")]

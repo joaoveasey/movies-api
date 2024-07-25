@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using movies_api.Infra;
 using movies_api.Interfaces;
 using movies_api.Repository;
-using MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
