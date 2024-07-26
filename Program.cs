@@ -18,7 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, serverVersion);
 });
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
-
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(c =>

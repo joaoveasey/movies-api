@@ -2,11 +2,6 @@
 
 namespace movies_api.Interfaces;
 
-public interface IMovieRepository
+public interface IMovieRepository : IRepository<Movie>
 {
-    IEnumerable<Movie> GetMovies();
-    Movie GetMovieById(int id);
-    void AddMovie(Movie movie);
-    void UpdateMovie(Movie movie);
-    void DeleteMovie(Movie movie);
 }
