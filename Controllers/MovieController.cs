@@ -60,7 +60,7 @@ namespace movies_api.Controllers
             if (_repository.GetById(id) == null)
                 return NotFound();
 
-            _repository.GetById(id);
+            _repository.Delete(movie);
             return NoContent();
         }
     }
