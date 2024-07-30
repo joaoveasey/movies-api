@@ -2,7 +2,7 @@
 
 public interface IUnitOfWork
 {
-    private IMovieRepository MovieRepository { get; }
+    public IMovieRepository MovieRepository { get; }
     void Commit();
 }
 
