@@ -1,7 +1,17 @@
 
   <h1>movie-api</h1>
-  <p>Welcome to my Movie API project! This API was developed to practice and apply concepts learned in college and various courses, such as C#, .NET 8, Entity Framework, MySQL, Dependency Injection, and the Repository Pattern.</p>
-
+  <p>Welcome to my Movie API project! This API was developed to practice and apply concepts learned in college and various courses, such as:</p>
+  
+  * C#
+  * .NET 8
+  * ASP.NET Web API
+  * Entity Framework
+  * MySQL
+  * Dependency Injection
+  * Repository Pattern
+  * Generic Repository
+  * Unit of Work
+  
 
 ## Instructions
 
