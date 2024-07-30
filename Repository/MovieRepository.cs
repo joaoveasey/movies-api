@@ -6,41 +6,10 @@ using System.Configuration;
 
 namespace movies_api.Repository
 {
-    public class MovieRepository : IMovieRepository
+    public class MovieRepository : Repository<Movie>, IMovieRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public MovieRepository(ApplicationDbContext context)
+        public MovieRepository(ApplicationDbContext context) : base(context) 
         {
-            _context = context;
-        }
-
-        public Movie GetMovieById(int id)
-        {
-            return _context.Movies.Find(id);
-        }
-
-        public IEnumerable<Movie> GetMovies()
-        {
-            return _context.Movies.ToList();
-        }
-
-        public void AddMovie(Movie movie)
-        {
-            _context.Movies.Add(movie);
-            _context.SaveChanges();
-        }
-
-        public void UpdateMovie(Movie movie)
-        {
-            _context.Movies.Update(movie);
-            _context.SaveChanges();
-        }
-
-        public void DeleteMovie(Movie movie)
-        {
-            _context.Movies.Remove(movie);
-            _context.SaveChanges();
         }
     }
 }

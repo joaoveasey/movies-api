@@ -8,17 +8,17 @@ namespace movies_api.Controllers
     [Route("api/v1/movie")]
     public class MovieController : ControllerBase
     {
-        private readonly IMovieRepository _movieRepository;
+        private readonly IRepository<Movie> _repository;
 
         public MovieController(IMovieRepository movieRepository)
         {
-            _movieRepository = movieRepository ?? throw new ArgumentNullException();
+            _repository = movieRepository ?? throw new ArgumentNullException();
         }
 
         [HttpGet]
-        public ActionResult GetMovies()
+        public ActionResult GetAllMovies()
         {
-            var movies = _movieRepository.GetMovies();
+            var movies = _repository.GetAll();
 
             return Ok(movies);
         }
@@ -26,10 +26,10 @@ namespace movies_api.Controllers
         [HttpGet("{id}")]
         public ActionResult GetMovieById(int id)
         {
-            if (_movieRepository.GetMovieById(id) == null)
+            if (_repository.GetById(id) == null)
                 return NotFound();
 
-            return Ok(_movieRepository.GetMovieById(id));
+            return Ok(_repository.GetById(id));
         }
 
         [HttpPost]
@@ -38,7 +38,7 @@ namespace movies_api.Controllers
             if (movie == null || movie.Title == null )
                 return BadRequest();
             
-            _movieRepository.AddMovie(movie);
+            _repository.Add(movie);
             return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
         }
 
@@ -48,19 +48,19 @@ namespace movies_api.Controllers
             if (movie.Id == null || movie.Id == 0 || movie.Title == null )
                 return BadRequest();
 
-            _movieRepository.UpdateMovie(movie);
+            _repository.Update(movie);
             return Ok(movie);
         }
 
         [HttpDelete("{id}")]
         public ActionResult DeleteMovie(int id)
         {
-            Movie movie = _movieRepository.GetMovieById(id);
+            Movie movie = _repository.GetById(id);
 
-            if (_movieRepository.GetMovieById(id) == null)
+            if (_repository.GetById(id) == null)
                 return NotFound();
 
-            _movieRepository.DeleteMovie(movie);
+            _repository.Delete(movie);
             return NoContent();
         }
     }
