@@ -8,17 +8,17 @@ namespace movies_api.Controllers
     [Route("api/v1/movie")]
     public class MovieController : ControllerBase
     {
-        private readonly IRepository<Movie> _repository;
+        private readonly IUnitOfWork _uof;
 
-        public MovieController(IMovieRepository movieRepository)
+        public MovieController(IUnitOfWork unitOfWork)
         {
-            _repository = movieRepository ?? throw new ArgumentNullException();
+            _uof = unitOfWork ?? throw new ArgumentNullException();
         }
 
         [HttpGet]
         public ActionResult GetAllMovies()
         {
-            var movies = _repository.GetAll();
+            var movies = _uof.MovieRepository.GetAll();
 
             return Ok(movies);
         }
@@ -26,10 +26,10 @@ namespace movies_api.Controllers
         [HttpGet("{id}")]
         public ActionResult GetMovieById(int id)
         {
-            if (_repository.GetById(id) == null)
+            if (_uof.MovieRepository.GetById(id) == null)
                 return NotFound();
 
-            return Ok(_repository.GetById(id));
+            return Ok(_uof.MovieRepository.GetById(id));
         }
 
         [HttpPost]
@@ -38,7 +38,8 @@ namespace movies_api.Controllers
             if (movie == null || movie.Title == null )
                 return BadRequest();
             
-            _repository.Add(movie);
+            _uof.MovieRepository.Add(movie);
+            _uof.Commit();
             return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
         }
 
@@ -48,19 +49,21 @@ namespace movies_api.Controllers
             if (movie.Id == null || movie.Id == 0 || movie.Title == null )
                 return BadRequest();
 
-            _repository.Update(movie);
+            _uof.MovieRepository.Update(movie);
+            _uof.Commit();
             return Ok(movie);
         }
 
         [HttpDelete("{id}")]
         public ActionResult DeleteMovie(int id)
         {
-            Movie movie = _repository.GetById(id);
+            Movie movie = _uof.MovieRepository.GetById(id);
 
-            if (_repository.GetById(id) == null)
+            if (_uof.MovieRepository.GetById(id) == null)
                 return NotFound();
 
-            _repository.Delete(movie);
+            _uof.MovieRepository.Delete(movie);
+            _uof.Commit();
             return NoContent();
         }
     }

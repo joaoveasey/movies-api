@@ -15,7 +15,7 @@ namespace movies_api.Repository
 
         public IEnumerable<T> GetAll()
         {
-            return _context.Set<T>().ToList();
+            return _context.Set<T>().AsNoTracking().ToList(); //AsNoTracking - optimize the memory and performance 
         }
 
         public T? GetById(int id)
@@ -26,20 +26,20 @@ namespace movies_api.Repository
         public T Add(T entity)
         {
             _context.Set<T>().Add(entity);
-            _context.SaveChanges();
+            //_context.SaveChanges(); (commented because Repository/UnitOfWork already does SaveChanges in the Commit method.)
             return entity;
         }
 
         public void Update(T entity)
         {
             _context.Set<T>().Update(entity);
-            _context.SaveChanges();
+            //_context.SaveChanges(); (commented because Repository/UnitOfWork already does SaveChanges in the Commit method.)
         }
 
         public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
-            _context.SaveChanges();
+            //_context.SaveChanges(); (commented because Repository/UnitOfWork already does SaveChanges in the Commit method.)
         }
     }
 }
