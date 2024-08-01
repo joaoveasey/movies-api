@@ -3,6 +3,7 @@ using movies_api.Interfaces;
 using movies_api.Model;
 using movies_api.DTOs;
 using movies_api.DTOs.Mappings;
+using AutoMapper;
 
 namespace movies_api.Controllers
 {
@@ -11,10 +12,12 @@ namespace movies_api.Controllers
     public class MovieController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
+        private readonly IMapper _mapper;
 
-        public MovieController(IUnitOfWork unitOfWork)
+        public MovieController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _uof = unitOfWork ?? throw new ArgumentNullException();
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -25,7 +28,7 @@ namespace movies_api.Controllers
             if (movies is null)
                 return NotFound("No movies found.");
 
-            var moviesDTO = movies.ToMovieDTOList();
+            var moviesDTO = _mapper.Map<IEnumerable<Movie>>(movies);
 
             return Ok(moviesDTO);
         }
@@ -38,7 +41,7 @@ namespace movies_api.Controllers
             if (movie is null)
                 return NotFound("No movie found with ID: " + id);
 
-            var movieDTO = movie.ToMovieDTO();
+            var movieDTO = _mapper.Map<MovieDTO>(movie);
 
             return Ok(movieDTO);
         }
@@ -49,12 +52,12 @@ namespace movies_api.Controllers
             if (movieDTO is null)
                 return BadRequest("Invalid data.");
 
-            var movie = movieDTO.ToMovie();
+            var movie = _mapper.Map<Movie>(movieDTO);
 
             var createdMovie = _uof.MovieRepository.Add(movie);
             _uof.Commit();
 
-            var newMovieDTO = createdMovie.ToMovieDTO();
+            var newMovieDTO = _mapper.Map<MovieDTO>(createdMovie);
 
             return Ok(newMovieDTO);
         }
@@ -65,12 +68,12 @@ namespace movies_api.Controllers
             if (movieDTO is null)
                 return BadRequest("Invalid data.");
 
-            var movie = movieDTO.ToMovie();
+            var movie = _mapper.Map<Movie>(movieDTO);
 
             var updatedMovie = _uof.MovieRepository.Update(movie);
             _uof.Commit();
 
-            var updatedMovieDTO = updatedMovie.ToMovieDTO();
+            var updatedMovieDTO = _mapper.Map<MovieDTO>(updatedMovie);
 
             return Ok(updatedMovieDTO);            
         }
@@ -86,7 +89,7 @@ namespace movies_api.Controllers
             var deletedMovie = _uof.MovieRepository.Delete(movie);
             _uof.Commit();
 
-            var deletedMovieDTO = deletedMovie.ToMovieDTO();
+            var deletedMovieDTO = _mapper.Map<MovieDTO>(deletedMovie);
 
             return Ok(deletedMovieDTO);
         }
