@@ -11,7 +11,7 @@
   * Repository Pattern
   * Generic Repository
   * Unit of Work
-  * DTOs (Data Transfer Objects)
+  * DTOs (Data Transfer Object)
   * AutoMapper
   
 
