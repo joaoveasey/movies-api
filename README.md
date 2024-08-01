@@ -1,5 +1,5 @@
 
-  <h1>movie-api</h1>
+  <h1>movie-api 🎥</h1>
   <p>Welcome to my Movie API project! This API was developed to practice and apply concepts learned in college and various courses, such as:</p>
   
   * C#
@@ -11,6 +11,8 @@
   * Repository Pattern
   * Generic Repository
   * Unit of Work
+  * DTOs (Data Transfer Object)
+  * AutoMapper
   
 
 ## Instructions

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using movies_api.DTOs.Mappings;
 using movies_api.Infra;
 using movies_api.Interfaces;
 using movies_api.Repository;
@@ -27,6 +28,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Movies API", Version = "v1" });
 });
+builder.Services.AddAutoMapper(typeof(MovieDTOMappingProfile));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
