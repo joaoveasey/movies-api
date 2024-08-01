@@ -14,14 +14,14 @@ public class Movie
     public int Duration { get; set; }
     public float Rating { get; set; }
 
-    public Movie(int id, string title, string genre, int year, string director, int duration, float rating)
-    {
-        Id = id;
-        Title = title;
-        Genre = genre;
-        Year = year;
-        Director = director;
-        Duration = duration;
-        Rating = rating;
-    }
+    //public Movie(int id, string title, int year, string genre, string director, int duration, float rating)
+    //{
+    //    Id = id;
+    //    Title = title;
+    //    Year = year;
+    //    Genre = genre;
+    //    Director = director;
+    //    Duration = duration;
+    //    Rating = rating;
+    //}
 }

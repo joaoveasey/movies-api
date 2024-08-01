@@ -30,16 +30,18 @@ namespace movies_api.Repository
             return entity;
         }
 
-        public void Update(T entity)
+        public T Update(T entity)
         {
             _context.Set<T>().Update(entity);
             //_context.SaveChanges(); (commented because Repository/UnitOfWork already does SaveChanges in the Commit method.)
+            return entity;
         }
 
-        public void Delete(T entity)
+        public T Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
             //_context.SaveChanges(); (commented because Repository/UnitOfWork already does SaveChanges in the Commit method.)
+            return entity;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using movies_api.Interfaces;
 using movies_api.Model;
+using movies_api.DTOs;
+using movies_api.DTOs.Mappings;
 
 namespace movies_api.Controllers
 {
@@ -16,55 +18,77 @@ namespace movies_api.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetAllMovies()
+        public ActionResult<IEnumerable<MovieDTO>> GetAllMovies()
         {
             var movies = _uof.MovieRepository.GetAll();
 
-            return Ok(movies);
+            if (movies is null)
+                return NotFound("No movies found.");
+
+            var moviesDTO = movies.ToMovieDTOList();
+
+            return Ok(moviesDTO);
         }
 
         [HttpGet("{id}")]
-        public ActionResult GetMovieById(int id)
+        public ActionResult<IEnumerable<Movie>> GetMovieById(int id)
         {
-            if (_uof.MovieRepository.GetById(id) == null)
-                return NotFound();
+            var movie = _uof.MovieRepository.GetById(id);
 
-            return Ok(_uof.MovieRepository.GetById(id));
+            if (movie is null)
+                return NotFound("No movie found with ID: " + id);
+
+            var movieDTO = movie.ToMovieDTO();
+
+            return Ok(movieDTO);
         }
 
         [HttpPost]
-        public ActionResult AddMovie([FromBody]Movie movie)
+        public ActionResult<MovieDTO> AddMovie(MovieDTO movieDTO)
         {
-            if (movie == null || movie.Title == null )
-                return BadRequest();
-            
-            _uof.MovieRepository.Add(movie);
+            if (movieDTO is null)
+                return BadRequest("Invalid data.");
+
+            var movie = movieDTO.ToMovie();
+
+            var createdMovie = _uof.MovieRepository.Add(movie);
             _uof.Commit();
-            return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id }, movie);
+
+            var newMovieDTO = createdMovie.ToMovieDTO();
+
+            return Ok(newMovieDTO);
         }
 
         [HttpPut]
-        public ActionResult UpdateMovie([FromBody] Movie movie)
+        public ActionResult<MovieDTO> UpdateMovie(MovieDTO movieDTO)
         {
-            if (movie.Id == null || movie.Id == 0 || movie.Title == null )
-                return BadRequest();
+            if (movieDTO is null)
+                return BadRequest("Invalid data.");
 
-            _uof.MovieRepository.Update(movie);
+            var movie = movieDTO.ToMovie();
+
+            var updatedMovie = _uof.MovieRepository.Update(movie);
             _uof.Commit();
-            return Ok(movie);
+
+            var updatedMovieDTO = updatedMovie.ToMovieDTO();
+
+            return Ok(updatedMovieDTO);            
         }
 
         [HttpDelete("{id}")]
-        public ActionResult DeleteMovie(int id)
+        public ActionResult<MovieDTO> DeleteMovie(int id)
         {
-            Movie movie = _uof.MovieRepository.GetById(id);
+            var movie = _uof.MovieRepository.GetById(id);
 
-            if (_uof.MovieRepository.GetById(id) == null)
-                return NotFound();
+            if (movie is null)
+                return NotFound("No movie found with ID: " + id);
 
-            _uof.MovieRepository.Delete(movie);
+            var deletedMovie = _uof.MovieRepository.Delete(movie);
             _uof.Commit();
-            return NoContent();
+
+            var deletedMovieDTO = deletedMovie.ToMovieDTO();
+
+            return Ok(deletedMovieDTO);
         }
     }
 }

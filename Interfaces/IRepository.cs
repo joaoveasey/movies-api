@@ -8,7 +8,7 @@ namespace movies_api.Interfaces
         IEnumerable<T> GetAll();
         T GetById(int id);
         T Add (T entity);
-        void Update (T entity);
-        void Delete(T entity);
+        T Update (T entity);
+        T Delete(T entity);
     }
 }
