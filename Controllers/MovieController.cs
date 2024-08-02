@@ -2,7 +2,7 @@
 using movies_api.Interfaces;
 using movies_api.Model;
 using movies_api.DTOs;
-using movies_api.DTOs.Mappings;
+using movies_api.Pagination;
 using AutoMapper;
 
 namespace movies_api.Controllers
@@ -44,6 +44,16 @@ namespace movies_api.Controllers
             var movieDTO = _mapper.Map<MovieDTO>(movie);
 
             return Ok(movieDTO);
+        }
+
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<Movie>> GetAllMovies ([FromQuery] MovieParameters movieParameters)
+        {
+            var movies = _uof.MovieRepository.GetMovies(movieParameters);
+
+            var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
+
+            return Ok(moviesDTO);
         }
 
         [HttpPost]
