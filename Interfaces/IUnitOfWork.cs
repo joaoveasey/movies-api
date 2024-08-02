@@ -3,6 +3,6 @@
 public interface IUnitOfWork
 {
     public IMovieRepository MovieRepository { get; }
-    void Commit();
+    Task CommitAsync();
 }
 

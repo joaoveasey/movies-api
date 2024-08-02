@@ -13,18 +13,20 @@ namespace movies_api.Repository
         {
         }
 
-        public IEnumerable<Movie> GetMovies(MovieParameters movieParams)
+        public async Task<IEnumerable<Movie>> GetMoviesAsync(MovieParameters movieParams)
         {
-            return GetAll()
+            var movies = await GetAllAsync();
+
+            return movies
                 .OrderBy(x => x.Id)
                 .Skip((movieParams.PageNumber - 1) * movieParams.PageSize) // used to calculate how many items has to be skipped from data collection acordding to size and number of the pages.
                 .Take(movieParams.PageSize)
                 .ToList();
         }
 
-        public IEnumerable<Movie> GetMoviesFilteredByYear(MovieFilteredByYear movieFilteredByYear)
+        public async Task<IEnumerable<Movie>> GetMoviesFilteredByYearAsync(MovieFilteredByYear movieFilteredByYear)
         {
-            var movies = GetAll().AsQueryable();
+            var movies = await GetAllAsync();
 
             if (movieFilteredByYear.Year.HasValue && !string.IsNullOrEmpty(movieFilteredByYear.Criterion))
             {
