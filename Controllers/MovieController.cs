@@ -56,6 +56,16 @@ namespace movies_api.Controllers
             return Ok(moviesDTO);
         }
 
+        [HttpGet("filter/year")]
+        public ActionResult<IEnumerable<MovieDTO>> GetMoviesFilteredByYear([FromQuery] MovieFilteredByYear movieFilteredByYear)
+        {
+            var movies = _uof.MovieRepository.GetMoviesFilteredByYear(movieFilteredByYear);
+
+            var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
+
+            return Ok(moviesDTO);
+        }
+
         [HttpPost]
         public ActionResult<MovieDTO> AddMovie(MovieDTO movieDTO)
         {

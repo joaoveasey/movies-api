@@ -21,5 +21,25 @@ namespace movies_api.Repository
                 .Take(movieParams.PageSize)
                 .ToList();
         }
+
+        public IEnumerable<Movie> GetMoviesFilteredByYear(MovieFilteredByYear movieFilteredByYear)
+        {
+            var movies = GetAll().AsQueryable();
+
+            if (movieFilteredByYear.Year.HasValue && !string.IsNullOrEmpty(movieFilteredByYear.Criterion))
+            {
+                if(movieFilteredByYear.Criterion.Equals("older", StringComparison.OrdinalIgnoreCase))
+                    movies = movies.Where(x => x.Year > movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
+
+                else if(movieFilteredByYear.Criterion.Equals("newer", StringComparison.OrdinalIgnoreCase))
+                    movies = movies.Where(x => x.Year < movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
+
+                else if(movieFilteredByYear.Criterion.Equals("equal", StringComparison.OrdinalIgnoreCase))
+                    movies = movies.Where(x => x.Year == movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
+            }
+
+            return movies.ToList();
+
+        }
     }
 }

@@ -13,6 +13,8 @@
   * Unit of Work
   * DTOs (Data Transfer Object)
   * AutoMapper
+  * Pagination
+  * Filter
   
 
 ## Instructions
