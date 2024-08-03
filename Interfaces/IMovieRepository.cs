@@ -5,6 +5,6 @@ namespace movies_api.Interfaces;
 
 public interface IMovieRepository : IRepository<Movie>
 {
-    IEnumerable<Movie> GetMovies(MovieParameters movieParams);
-    IEnumerable<Movie> GetMoviesFilteredByYear(MovieFilteredByYear movieFilteredByYear);
+    Task<IEnumerable<Movie>> GetMoviesAsync(MovieParameters movieParams);
+    Task<IEnumerable<Movie>> GetMoviesFilteredByYearAsync(MovieFilteredByYear movieFilteredByYear);
 }

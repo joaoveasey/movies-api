@@ -21,9 +21,9 @@ namespace movies_api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<MovieDTO>> GetAllMovies()
+        public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
         {
-            var movies = _uof.MovieRepository.GetAll();
+            var movies = await _uof.MovieRepository.GetAllAsync();
 
             if (movies is null)
                 return NotFound("No movies found.");
@@ -34,9 +34,9 @@ namespace movies_api.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<IEnumerable<Movie>> GetMovieById(int id)
+        public async Task<ActionResult<IEnumerable<Movie>>> GetMovieById(int id)
         {
-            var movie = _uof.MovieRepository.GetById(id);
+            var movie = await _uof.MovieRepository.GetByIdAsync(id);
 
             if (movie is null)
                 return NotFound("No movie found with ID: " + id);
@@ -47,9 +47,9 @@ namespace movies_api.Controllers
         }
 
         [HttpGet("pagination")]
-        public ActionResult<IEnumerable<Movie>> GetAllMovies ([FromQuery] MovieParameters movieParameters)
+        public async Task<ActionResult<IEnumerable<Movie>>> GetAllMovies ([FromQuery] MovieParameters movieParameters)
         {
-            var movies = _uof.MovieRepository.GetMovies(movieParameters);
+            var movies = await _uof.MovieRepository.GetMoviesAsync(movieParameters);
 
             var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
 
@@ -57,9 +57,9 @@ namespace movies_api.Controllers
         }
 
         [HttpGet("filter/year")]
-        public ActionResult<IEnumerable<MovieDTO>> GetMoviesFilteredByYear([FromQuery] MovieFilteredByYear movieFilteredByYear)
+        public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMoviesFilteredByYear([FromQuery] MovieFilteredByYear movieFilteredByYear)
         {
-            var movies = _uof.MovieRepository.GetMoviesFilteredByYear(movieFilteredByYear);
+            var movies = await _uof.MovieRepository.GetMoviesFilteredByYearAsync(movieFilteredByYear);
 
             var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
 
@@ -67,7 +67,7 @@ namespace movies_api.Controllers
         }
 
         [HttpPost]
-        public ActionResult<MovieDTO> AddMovie(MovieDTO movieDTO)
+        public async Task<ActionResult<MovieDTO>> AddMovie(MovieDTO movieDTO)
         {
             if (movieDTO is null)
                 return BadRequest("Invalid data.");
@@ -75,7 +75,7 @@ namespace movies_api.Controllers
             var movie = _mapper.Map<Movie>(movieDTO);
 
             var createdMovie = _uof.MovieRepository.Add(movie);
-            _uof.Commit();
+            await _uof.CommitAsync();
 
             var newMovieDTO = _mapper.Map<MovieDTO>(createdMovie);
 
@@ -83,7 +83,7 @@ namespace movies_api.Controllers
         }
 
         [HttpPut]
-        public ActionResult<MovieDTO> UpdateMovie(MovieDTO movieDTO)
+        public async Task<ActionResult<MovieDTO>> UpdateMovie(MovieDTO movieDTO)
         {
             if (movieDTO is null)
                 return BadRequest("Invalid data.");
@@ -91,7 +91,7 @@ namespace movies_api.Controllers
             var movie = _mapper.Map<Movie>(movieDTO);
 
             var updatedMovie = _uof.MovieRepository.Update(movie);
-            _uof.Commit();
+            await _uof.CommitAsync();
 
             var updatedMovieDTO = _mapper.Map<MovieDTO>(updatedMovie);
 
@@ -99,15 +99,15 @@ namespace movies_api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<MovieDTO> DeleteMovie(int id)
+        public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
         {
-            var movie = _uof.MovieRepository.GetById(id);
+            var movie = await _uof.MovieRepository.GetByIdAsync(id);
 
             if (movie is null)
                 return NotFound("No movie found with ID: " + id);
 
             var deletedMovie = _uof.MovieRepository.Delete(movie);
-            _uof.Commit();
+            await _uof.CommitAsync();
 
             var deletedMovieDTO = _mapper.Map<MovieDTO>(deletedMovie);
 

@@ -13,14 +13,14 @@ namespace movies_api.Repository
             _context = context;
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return _context.Set<T>().AsNoTracking().ToList(); //AsNoTracking - optimize the memory and performance 
+            return await _context.Set<T>().AsNoTracking().ToListAsync(); //AsNoTracking - optimize the memory and performance 
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
-            return _context.Set<T>().Find(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
         public T Add(T entity)
