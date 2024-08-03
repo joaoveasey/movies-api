@@ -29,10 +29,10 @@ namespace movies_api.Repository
             if (movieFilteredByYear.Year.HasValue && !string.IsNullOrEmpty(movieFilteredByYear.Criterion))
             {
                 if(movieFilteredByYear.Criterion.Equals("older", StringComparison.OrdinalIgnoreCase))
-                    movies = movies.Where(x => x.Year > movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
+                    movies = movies.Where(x => x.Year < movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
 
                 else if(movieFilteredByYear.Criterion.Equals("newer", StringComparison.OrdinalIgnoreCase))
-                    movies = movies.Where(x => x.Year < movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
+                    movies = movies.Where(x => x.Year > movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
 
                 else if(movieFilteredByYear.Criterion.Equals("equal", StringComparison.OrdinalIgnoreCase))
                     movies = movies.Where(x => x.Year == movieFilteredByYear.Year.Value).OrderBy(p => p.Year);
