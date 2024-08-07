@@ -15,6 +15,9 @@
   * AutoMapper
   * Pagination
   * Filter
+  * Asynchronous Programming
+  * Migrations
+  * JWT Authentication
   
 
 ## Instructions
