@@ -4,6 +4,7 @@ using movies_api.Model;
 using movies_api.DTOs;
 using movies_api.Pagination;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace movies_api.Controllers
 {
@@ -21,6 +22,7 @@ namespace movies_api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
         {
             var movies = await _uof.MovieRepository.GetAllAsync();
