@@ -5,7 +5,7 @@ using movies_api.Model;
 
 namespace movies_api.Infra;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationsUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : base(options)
@@ -13,4 +13,9 @@ public class ApplicationDbContext : IdentityDbContext
     }
 
     public DbSet<Movie> Movies { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+    }
 }
