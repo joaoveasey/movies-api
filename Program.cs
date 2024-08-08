@@ -10,7 +10,7 @@ using movies_api.Repository;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-var secretKey = builder.Configuration["SecretKey"] ?? throw new ArgumentException("Invalid Secret Key!");
+var secretKey = builder.Configuration["JWT:SecretKey"] ?? throw new ArgumentException("Invalid Secret Key!");
 // Add services to the container.
 
 builder.Services.AddAuthentication(options => {
@@ -36,7 +36,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddIdentity<ApplicationsUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 

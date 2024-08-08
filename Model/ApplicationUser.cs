@@ -2,7 +2,7 @@
 
 namespace movies_api.Model;
 
-public class ApplicationsUser : IdentityUser
+public class ApplicationUser : IdentityUser
 {
     public string? RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }

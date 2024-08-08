@@ -5,7 +5,7 @@ using movies_api.Model;
 
 namespace movies_api.Infra;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationsUser>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : base(options)
