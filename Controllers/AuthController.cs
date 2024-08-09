@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using movies_api.DTOs;
 using movies_api.Model;
@@ -50,7 +51,7 @@ public class AuthController : ControllerBase
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             }
 
-            var token = _tokenService.GenerateAcessToken(authClaims, _configuration);
+            var token = _tokenService.GenerateAccessToken(authClaims, _configuration);
 
             var refreshToken = _tokenService.GenerateRefreshToken();
 
@@ -79,9 +80,7 @@ public class AuthController : ControllerBase
         var userExists = await _userManager.FindByEmailAsync(model.Username!);
 
         if (userExists is not null)
-        {
             return BadRequest("User already exists!");
-        }
 
         ApplicationUser user = new()
         {
@@ -90,13 +89,67 @@ public class AuthController : ControllerBase
             UserName = model.Username
         };
 
-        var result = await _userManager.CreateAsync(user, model.Password);
+        var result = await _userManager.CreateAsync(user, model.Password!);
 
         if (!result.Succeeded)
-        {
             return BadRequest("User creation failed\n" + result.Errors);
-        }
 
         return Ok($"User created successfully\n{user.Email}\n{user.UserName}");
+    }
+
+    [HttpPost]
+    [Route("refresh-token")]
+    public async Task<IActionResult> RefreshToken(TokenModelDTO tokenModel)
+    {
+        if(tokenModel is null)
+            return BadRequest("Invalid client request");
+
+        string? accessToken = tokenModel.AcessToken
+                    ?? throw new ArgumentNullException(nameof(tokenModel));
+
+        string? refreshToken = tokenModel.RefreshToken
+                    ?? throw new ArgumentNullException(nameof(tokenModel)); 
+
+        var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken!, _configuration);
+
+        if (principal is null)
+            return BadRequest("Invalid token");
+
+        string username = principal.Identity.Name;
+
+        var user = await _userManager.FindByNameAsync(username!);
+
+        if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            return BadRequest("Invalid access token");
+
+        var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims.ToList(), _configuration);
+
+        var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+        user.RefreshToken = newRefreshToken;
+        await _userManager.UpdateAsync(user);
+
+        return new ObjectResult(new
+        {
+            accessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+            refreshToken = newAccessToken
+        });
+    }
+
+    [Authorize]
+    [HttpPost]
+    [Route("revoke/{username}")]
+    public async Task<IActionResult> Revoke(string username)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+
+        if (user is null)
+            return BadRequest("Invalid user name");
+
+        user.RefreshToken = null;
+
+        await _userManager.UpdateAsync(user);
+
+        return Ok("Refresh token has been revoked");
     }
 }

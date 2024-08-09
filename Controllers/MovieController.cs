@@ -22,7 +22,6 @@ namespace movies_api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
         {
             var movies = await _uof.MovieRepository.GetAllAsync();
@@ -48,6 +47,7 @@ namespace movies_api.Controllers
             return Ok(movieDTO);
         }
 
+        [Authorize]
         [HttpGet("pagination")]
         public async Task<ActionResult<IEnumerable<Movie>>> GetAllMovies ([FromQuery] MovieParameters movieParameters)
         {
@@ -68,6 +68,7 @@ namespace movies_api.Controllers
             return Ok(moviesDTO);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<MovieDTO>> AddMovie(MovieDTO movieDTO)
         {
@@ -84,6 +85,7 @@ namespace movies_api.Controllers
             return Ok(newMovieDTO);
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<ActionResult<MovieDTO>> UpdateMovie(MovieDTO movieDTO)
         {
@@ -100,6 +102,7 @@ namespace movies_api.Controllers
             return Ok(updatedMovieDTO);            
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
         {
