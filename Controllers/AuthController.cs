@@ -15,12 +15,12 @@ public class AuthController : ControllerBase
 {
     private readonly ITokenService _tokenService;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationUser> _signInManager;
+    private readonly RoleManager<IdentityRole> _signInManager;
     private readonly IConfiguration _configuration;
 
     public AuthController(ITokenService? tokenService, 
         UserManager<ApplicationUser>? userManager, 
-        RoleManager<ApplicationUser>? signInManager, 
+        RoleManager<IdentityRole>? signInManager, 
         IConfiguration? configuration)
     {
         _tokenService = tokenService;
@@ -77,7 +77,7 @@ public class AuthController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModelDTO model)
     {
-        var userExists = await _userManager.FindByEmailAsync(model.Username!);
+        var userExists = await _userManager.FindByEmailAsync(model.Email!);
 
         if (userExists is not null)
             return BadRequest("User already exists!");
@@ -92,7 +92,10 @@ public class AuthController : ControllerBase
         var result = await _userManager.CreateAsync(user, model.Password!);
 
         if (!result.Succeeded)
-            return BadRequest("User creation failed\n" + result.Errors);
+        {
+            var errorMessages = result.Errors.Select(e => e.Description).ToList();
+            return BadRequest(new {Errors = errorMessages});
+        }
 
         return Ok($"User created successfully\n{user.Email}\n{user.UserName}");
     }

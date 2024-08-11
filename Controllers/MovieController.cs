@@ -21,6 +21,7 @@ namespace movies_api.Controllers
             _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
         {
