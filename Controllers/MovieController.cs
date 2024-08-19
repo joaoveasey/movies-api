@@ -4,6 +4,7 @@ using movies_api.Model;
 using movies_api.DTOs;
 using movies_api.Pagination;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace movies_api.Controllers
 {
@@ -66,6 +67,7 @@ namespace movies_api.Controllers
             return Ok(moviesDTO);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<MovieDTO>> AddMovie(MovieDTO movieDTO)
         {
@@ -82,6 +84,7 @@ namespace movies_api.Controllers
             return Ok(newMovieDTO);
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<ActionResult<MovieDTO>> UpdateMovie(MovieDTO movieDTO)
         {
@@ -98,6 +101,7 @@ namespace movies_api.Controllers
             return Ok(updatedMovieDTO);            
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
         {
