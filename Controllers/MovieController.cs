@@ -21,7 +21,6 @@ namespace movies_api.Controllers
             _mapper = mapper;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
         {
@@ -48,7 +47,6 @@ namespace movies_api.Controllers
             return Ok(movieDTO);
         }
 
-        [Authorize]
         [HttpGet("pagination")]
         public async Task<ActionResult<IEnumerable<Movie>>> GetAllMovies ([FromQuery] MovieParameters movieParameters)
         {
