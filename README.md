@@ -18,11 +18,9 @@
   * Asynchronous Programming
   * Migrations
   * JWT Authentication
-  
 
-## Instructions
 
-### Prerequisites
+## Prerequisites
 
 Ensure you have the following packages installed:
 
@@ -34,7 +32,7 @@ Ensure you have the following packages installed:
 <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 ```
 
-### Configuration
+## Configuration
 Update the connection string in your appsettings.json file to match your MySQL database configuration:
 
 ```json
@@ -43,7 +41,7 @@ Update the connection string in your appsettings.json file to match your MySQL d
 }
 ```
 
-### Database Setup (MySQL)
+## Database Setup (MySQL)
 To set up the database and the table, execute the following SQL commands:
 
 ```sql
@@ -65,16 +63,30 @@ CREATE TABLE tb_Movies (
 );
 ```
 
-### Running the API
+## Running the API
 * Clone the repository to your local machine.
 * Open the project in Visual Studio 2022.
 * Ensure your NuGet packages are installed.
 * Ensure your MySQL server is running and the connection string is correctly configured.
 * Run the application.
 
-### Built With
-* C#
-* .NET 8
-* Entity Framework Core
-* MySQL
+## How to Authenticate with JWT
+#### Register a New Account:
+* Start by creating an account via the endpoint: POST /api/Auth/register.
+
+
+#### Log In:
+* After registration, log in using your credentials at: POST /api/Auth/login.
+* Upon successful login, a JSON Web Token (JWT) will be generated for you.
+  
+#### Authorize Requests:
+* With the generated token, click on the "Authorize" button in your API testing tool.
+* ![image](https://github.com/user-attachments/assets/37c5f44b-b9ea-4231-97f8-aaf0c2eac547)
+
+
+* In the authorization modal, enter the token in the following format:
+Bearer ````your_generated_token````
+
+#### Access Protected Endpoints:
+* Once authorized, you will have permission to create, update, and delete movies through the respective API endpoints.
 
