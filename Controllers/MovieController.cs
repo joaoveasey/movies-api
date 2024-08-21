@@ -5,117 +5,120 @@ using movies_api.DTOs;
 using movies_api.Pagination;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
-namespace movies_api.Controllers
+namespace movies_api.Controllers;
+
+[ApiController]
+[Route("api/v1/movie")]
+[EnableRateLimiting("fixedwindow")]
+public class MovieController : ControllerBase
 {
-    [ApiController]
-    [Route("api/v1/movie")]
-    public class MovieController : ControllerBase
+    private readonly IUnitOfWork _uof;
+    private readonly IMapper _mapper;
+
+    public MovieController(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        private readonly IUnitOfWork _uof;
-        private readonly IMapper _mapper;
+        _uof = unitOfWork ?? throw new ArgumentNullException();
+        _mapper = mapper;
+    }
 
-        public MovieController(IUnitOfWork unitOfWork, IMapper mapper)
-        {
-            _uof = unitOfWork ?? throw new ArgumentNullException();
-            _mapper = mapper;
-        }
+    [HttpGet]
+    [DisableRateLimiting]
+    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
+    {
+        var movies = await _uof.MovieRepository.GetAllAsync();
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MovieDTO>>> GetAllMovies()
-        {
-            var movies = await _uof.MovieRepository.GetAllAsync();
+        if (movies is null)
+            return NotFound("No movies found.");
 
-            if (movies is null)
-                return NotFound("No movies found.");
+        var moviesDTO = _mapper.Map<IEnumerable<Movie>>(movies);
 
-            var moviesDTO = _mapper.Map<IEnumerable<Movie>>(movies);
+        return Ok(moviesDTO);
+    }
 
-            return Ok(moviesDTO);
-        }
+    [HttpGet("{id}")]
+    [DisableRateLimiting]
+    public async Task<ActionResult<IEnumerable<Movie>>> GetMovieById(int id)
+    {
+        var movie = await _uof.MovieRepository.GetByIdAsync(id);
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovieById(int id)
-        {
-            var movie = await _uof.MovieRepository.GetByIdAsync(id);
+        if (movie is null)
+            return NotFound("No movie found with ID: " + id);
 
-            if (movie is null)
-                return NotFound("No movie found with ID: " + id);
+        var movieDTO = _mapper.Map<MovieDTO>(movie);
 
-            var movieDTO = _mapper.Map<MovieDTO>(movie);
+        return Ok(movieDTO);
+    }
 
-            return Ok(movieDTO);
-        }
+    [HttpGet("pagination")]
+    public async Task<ActionResult<IEnumerable<Movie>>> GetAllMovies ([FromQuery] MovieParameters movieParameters)
+    {
+        var movies = await _uof.MovieRepository.GetMoviesAsync(movieParameters);
 
-        [HttpGet("pagination")]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetAllMovies ([FromQuery] MovieParameters movieParameters)
-        {
-            var movies = await _uof.MovieRepository.GetMoviesAsync(movieParameters);
+        var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
 
-            var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
+        return Ok(moviesDTO);
+    }
 
-            return Ok(moviesDTO);
-        }
+    [HttpGet("filter/year")]
+    public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMoviesFilteredByYear([FromQuery] MovieFilteredByYear movieFilteredByYear)
+    {
+        var movies = await _uof.MovieRepository.GetMoviesFilteredByYearAsync(movieFilteredByYear);
 
-        [HttpGet("filter/year")]
-        public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMoviesFilteredByYear([FromQuery] MovieFilteredByYear movieFilteredByYear)
-        {
-            var movies = await _uof.MovieRepository.GetMoviesFilteredByYearAsync(movieFilteredByYear);
+        var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
 
-            var moviesDTO = _mapper.Map<IEnumerable<MovieDTO>>(movies);
+        return Ok(moviesDTO);
+    }
 
-            return Ok(moviesDTO);
-        }
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<MovieDTO>> AddMovie(MovieDTO movieDTO)
+    {
+        if (movieDTO is null)
+            return BadRequest("Invalid data.");
 
-        [Authorize]
-        [HttpPost]
-        public async Task<ActionResult<MovieDTO>> AddMovie(MovieDTO movieDTO)
-        {
-            if (movieDTO is null)
-                return BadRequest("Invalid data.");
+        var movie = _mapper.Map<Movie>(movieDTO);
 
-            var movie = _mapper.Map<Movie>(movieDTO);
+        var createdMovie = _uof.MovieRepository.Add(movie);
+        await _uof.CommitAsync();
 
-            var createdMovie = _uof.MovieRepository.Add(movie);
-            await _uof.CommitAsync();
+        var newMovieDTO = _mapper.Map<MovieDTO>(createdMovie);
 
-            var newMovieDTO = _mapper.Map<MovieDTO>(createdMovie);
+        return Ok(newMovieDTO);
+    }
 
-            return Ok(newMovieDTO);
-        }
+    [Authorize]
+    [HttpPut]
+    public async Task<ActionResult<MovieDTO>> UpdateMovie(MovieDTO movieDTO)
+    {
+        if (movieDTO is null)
+            return BadRequest("Invalid data.");
 
-        [Authorize]
-        [HttpPut]
-        public async Task<ActionResult<MovieDTO>> UpdateMovie(MovieDTO movieDTO)
-        {
-            if (movieDTO is null)
-                return BadRequest("Invalid data.");
+        var movie = _mapper.Map<Movie>(movieDTO);
 
-            var movie = _mapper.Map<Movie>(movieDTO);
+        var updatedMovie = _uof.MovieRepository.Update(movie);
+        await _uof.CommitAsync();
 
-            var updatedMovie = _uof.MovieRepository.Update(movie);
-            await _uof.CommitAsync();
+        var updatedMovieDTO = _mapper.Map<MovieDTO>(updatedMovie);
 
-            var updatedMovieDTO = _mapper.Map<MovieDTO>(updatedMovie);
+        return Ok(updatedMovieDTO);            
+    }
 
-            return Ok(updatedMovieDTO);            
-        }
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
+    {
+        var movie = await _uof.MovieRepository.GetByIdAsync(id);
 
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<MovieDTO>> DeleteMovie(int id)
-        {
-            var movie = await _uof.MovieRepository.GetByIdAsync(id);
+        if (movie is null)
+            return NotFound("No movie found with ID: " + id);
 
-            if (movie is null)
-                return NotFound("No movie found with ID: " + id);
+        var deletedMovie = _uof.MovieRepository.Delete(movie);
+        await _uof.CommitAsync();
 
-            var deletedMovie = _uof.MovieRepository.Delete(movie);
-            await _uof.CommitAsync();
+        var deletedMovieDTO = _mapper.Map<MovieDTO>(deletedMovie);
 
-            var deletedMovieDTO = _mapper.Map<MovieDTO>(deletedMovie);
-
-            return Ok(deletedMovieDTO);
-        }
+        return Ok(deletedMovieDTO);
     }
 }
