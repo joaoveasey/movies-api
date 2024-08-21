@@ -18,6 +18,7 @@
   * Asynchronous Programming
   * Migrations
   * JWT Authentication
+  * Rate Limiter
 
 
 ## Prerequisites
