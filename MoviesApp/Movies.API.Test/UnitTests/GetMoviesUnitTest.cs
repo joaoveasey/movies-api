@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using movies_api.Controllers;
+using movies_api.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,15 +23,12 @@ public class GetMoviesUnitTest : IClassFixture<MoviesUnitTestController>
     public async Task GetMovieById_OkResult()
     {
         // arrange
-
         var prodId = 2;
 
         // act
-
         var data = await _controller.GetMovieById(prodId);
 
         // assert (fluent assertions)
-
         data.Result.Should().BeOfType<OkObjectResult>()
                    .Which.StatusCode.Should().Be(200);
     }
@@ -55,5 +53,15 @@ public class GetMoviesUnitTest : IClassFixture<MoviesUnitTestController>
 
         data.Result.Should().BeOfType<BadRequestObjectResult>()
                    .Which.StatusCode.Should().Be(400);
+    }
+
+    [Fact]
+    public async Task GetAllMovies_OkResult()
+    {
+        var data = await _controller.GetAllMovies();
+
+        data.Result.Should().BeOfType<OkObjectResult>()
+                   .Which.Value.Should().BeAssignableTo<IEnumerable<MovieDTO>>()
+                   .And.NotBeNull();
     }
 }
