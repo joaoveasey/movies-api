@@ -41,6 +41,9 @@ public class MovieController : ControllerBase
     [DisableRateLimiting]
     public async Task<ActionResult<IEnumerable<Movie>>> GetMovieById(int id)
     {
+        if (id <= 0)
+            return BadRequest("The ID must be greater than zero.");
+
         var movie = await _uof.MovieRepository.GetByIdAsync(id);
 
         if (movie is null)
