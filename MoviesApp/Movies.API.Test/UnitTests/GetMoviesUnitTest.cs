@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using movies_api.Controllers;
 using movies_api.DTOs;
+using movies_api.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,7 @@ public class GetMoviesUnitTest : IClassFixture<MoviesUnitTestController>
         var data = await _controller.GetAllMovies();
 
         data.Result.Should().BeOfType<OkObjectResult>()
-                   .Which.Value.Should().BeAssignableTo<IEnumerable<MovieDTO>>()
+                   .Which.Value.Should().BeAssignableTo<IEnumerable<Movie>>()
                    .And.NotBeNull();
     }
 }
